@@ -1,42 +1,36 @@
-var await = require('await');
-var fs = require('fs');
-var colors = require('colors');
-var util = require('util');
+var await = require('await'),
+    fs = require('fs'),
+    colors = require('colors'),
+    util = require('util');
 
-// --------------------------------------------
+var format = util.format.bind(util);
 
 module.exports = function(args){
   start()
-  .then(function(){
-    return getTransferInfo(args);
-  })
-  .then(function(got){
-    return canCopyFiles(got.transferInfo);
-  })
-  .catch(function(err){
-    console.error(f('Error: %s', err.message).red);
-    console.error('No changes were made.'.red);
-    process.exit(1);
-  })
-  .then(function(got){
-    return copyFiles(got.transferInfo);
-  })
-  .then(function(){
-    console.log('All done!'.green.bold);
-    process.exit(0);
-  })
-  .catch(function(err){
-    console.error(f('Error: %s', err.message).red);
-    process.exit(1);
-  })
-  ;
+    .then(function(){
+      return getTransferInfo(args);
+    })
+    .then(function(got){
+      return canCopyFiles(got.transferInfo);
+    })
+    .catch(function(err){
+      console.error(f('Error: %s', err.message).red);
+      console.error('No changes were made.'.red);
+      process.exit(1);
+    })
+    .then(function(got){
+      return copyFiles(got.transferInfo);
+    })
+    .then(function(){
+      console.log('All done!'.green.bold);
+      process.exit(0);
+    })
+    .catch(function(err){
+      console.error(f('Error: %s', err.message).red);
+      process.exit(1);
+    });
 };
 
-// --------------------------------------------
-
-var f = util.format.bind(util);
-
-// --------------------------------------------
 
 function getTransferInfo(args){
   var sourceDir = __dirname + '/copyables';
