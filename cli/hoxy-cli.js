@@ -1,22 +1,23 @@
 #!/usr/bin/env node
 
-var parseArgs = require('minimist');
-var await = require('await');
-var fs = require('fs');
+var commander = require('commander'),
+    await = require('await'),
+    fs = require('fs');
 
-var args = parseArgs(process.argv.slice(2), {
-  default: { port: '8080' }
-});
+var pkg = require('../package.json');
 
-args.port = parseInt(args.port, 10);
+commander
+    .version(pkg.version)
+    .usage('<command> [options...]');
+    
+commander
+    .command('init')
+    .action(require('./init'));
 
-var subcommand = args._[0];
+commander
+    .command('run')
+    .option('--port <port>', 'port hoxy will listen on', 8080)
+    .action(require('./run'));
 
-if (subcommand === 'init'){
-  require('./' + subcommand)(args);
-} else if (subcommand === 'run') {
-  require('./' + subcommand)(args);
-} else {
-  console.error('unknown subcommand ' + subcommand);
-  process.exit(1);
-}
+commander
+    .parse(process.argv);
